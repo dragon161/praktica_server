@@ -6,5 +6,13 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "mockingoose": "^2.16.2",
+    "supertest": "^7.0.0"
+  },
+  "scripts": {
+    "test": "jest --verbose"
   }
 }
