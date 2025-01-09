@@ -4,7 +4,7 @@ const User = require('../models/user');
 const Rating = require('../models/rating');
 
 
-const addAchievement = async (req, res) => {
+const addAchievement = async (req, res, next) => {
   console.log('Запрос на создание достижения:', req.body);
   try {
     const { title, description, images } = req.body;
@@ -17,10 +17,10 @@ const addAchievement = async (req, res) => {
       res.status(201).send(newAchievement);
     } catch (error) {
       console.error('Ошибка при создании достижения:', error);
-     res.status(500).send({ message: 'Ошибка при добавлении достижения' });
+     next(error);
   }
 };
-const updateAchievement = async (req, res) => {
+const updateAchievement = async (req, res, next) => {
     try {
         const { id } = req.params;
         const { title, description, images } = req.body;
@@ -35,45 +35,45 @@ const updateAchievement = async (req, res) => {
         res.send(updatedAchievement);
    } catch (error) {
         console.error('Ошибка при обновлении достижения:', error);
-        res.status(500).send({ message: 'Ошибка при обновлении достижения' });
+        next(error);
     }
 };
 
-const deleteAchievement = async (req, res) => {
+const deleteAchievement = async (req, res, next) => {
     try {
        const { id } = req.params;
       const deletedAchievement = await Achievement.findByIdAndDelete(id);
        if (!deletedAchievement) {
             return res.status(404).send({ error: 'Достижение не найдено' });
         }
-       res.status(204).send();
+       res.sendStatus(204);
     } catch (error) {
         console.error('Ошибка при удалении достижения:', error);
-       res.status(500).send({ message: 'Ошибка при удалении достижения' });
+        next(error);
   }
 };
-const getAchievementsByUser = async (req, res) => {
+const getAchievementsByUser = async (req, res, next) => {
     try {
         const userId  = req.user.id;
         const achievements = await Achievement.find({ userId });
         res.send(achievements);
   } catch (error) {
        console.error('Ошибка при получении достижений пользователя:', error);
-     res.status(500).send({ message: 'Ошибка при получении достижений пользователя' });
+        next(error);
     }
 };
 
-const getAllAchievements = async (req, res) => {
+const getAllAchievements = async (req, res, next) => {
     try {
         const achievements = await Achievement.find();
         res.send(achievements);
    } catch (error) {
         console.error('Ошибка при получении всех достижений:', error);
-        res.status(500).send({ message: 'Ошибка при получении всех достижений' });
+        next(error);
     }
 };
 
-const rateAchievement = async (req, res) => {
+const rateAchievement = async (req, res, next) => {
   try {
     const { achievementId, rating } = req.body;
     const newRating = await Rating.create({
@@ -84,10 +84,10 @@ const rateAchievement = async (req, res) => {
      res.status(201).send(newRating);
    } catch (error) {
         console.error('Ошибка при создании оценки:', error);
-        res.status(500).send({ message: 'Ошибка при создании оценки' });
+        next(error);
    }
 }
-const getAverageRating = async (req, res) => {
+const getAverageRating = async (req, res, next) => {
   try {
       const { id } = req.params
      const ratings = await Rating.find({ achievementId: id });
@@ -99,7 +99,7 @@ const getAverageRating = async (req, res) => {
        res.send({averageRating});
    } catch (error) {
         console.error('Ошибка при получении средней оценки:', error);
-       res.status(500).send({ message: 'Ошибка при получении средней оценки' });
+        next(error);
     }
 }
 

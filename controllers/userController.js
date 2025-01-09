@@ -2,7 +2,7 @@ const User = require('../models/user');
 
 const updateUser = async (req, res) => {
     try {
-         const {id} = req.user; 
+         const {id} = req.user;
         const { name, email, password } = req.body;
 
          const updatedUser = await User.findByIdAndUpdate(id, {name, email, password}, {new: true}).select('-password');
@@ -41,21 +41,20 @@ const getUserRatings = async (req, res) => {
 };
 
 
-const deleteUser = async (req, res) => {
+const deleteUser = async (req, res, next) => {
     try {
         const {id} = req.user
         const deletedUser = await User.findByIdAndDelete(id);
         if (!deletedUser) {
             return res.status(404).send({ error: 'Пользователь не найден' });
         }
-        res.status(204).send();
+        res.sendStatus(204);
     } catch (error) {
-        console.error(error);
-        res.status(500).send({ error: 'Ошибка при удалении пользователя' });
+        next(error)
     }
 };
 
-const getUser = async (req, res) => {
+const getUser = async (req, res, next) => {
     try {
         const {id} = req.user
         const user = await User.findById(id).select('-password');
@@ -64,8 +63,7 @@ const getUser = async (req, res) => {
         }
         res.send(user);
     } catch (error) {
-        console.error(error);
-        res.status(500).send({ error: 'Ошибка при получении данных пользователя' });
+       next(error);
     }
 };
 
